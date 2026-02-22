@@ -1,0 +1,23 @@
+{
+  "name": "pim-system",
+  "version": "1.0.0",
+  "description": "Product Information Management System - Full Stack Application",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd backend && npm start",
+    "dev:frontend": "cd frontend && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "backend-only": "cd backend && npm start",
+    "frontend-only": "cd frontend && npm start"
+  },
+  "keywords": [
+    "pim",
+    "product",
+    "management",
+    "nodejs",
+    "react",
+    "sqlite"
+  ],
+  "author": "",
+  "license": "MIT"
+}
