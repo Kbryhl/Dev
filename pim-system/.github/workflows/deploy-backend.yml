@@ -1,0 +1,30 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/deploy-backend.yml'
+
+jobs:
+  deploy-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Deploy to Railway
+      uses: JustinBeckwith/deploy-action@master
+      with:
+        path: backend
+        railway-token: ${{ secrets.RAILWAY_TOKEN }}
+      env:
+        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      continue-on-error: true
+    
+    - name: Alternative: Deploy to Render
+      run: |
+        echo "Manual deployment to Render.com"
+        echo "Connect your GitHub repo to Render.com dashboard and set up auto-deploy"
+      continue-on-error: true

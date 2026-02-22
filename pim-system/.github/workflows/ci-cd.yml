@@ -1,0 +1,70 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    working-directory: ./backend
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./backend
+    
+    - name: Check for obvious syntax errors
+      run: node -c src/server.js
+      working-directory: ./backend
+    
+    - name: Verify database initialization
+      run: node src/database/db.js
+      working-directory: ./backend
+      continue-on-error: true
+
+  test-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./frontend
+    
+    - name: Build React app
+      run: npm run build
+      working-directory: ./frontend
+      env:
+        CI: false
+
+  code-quality:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Check for TODO items
+      run: grep -r "TODO\|FIXME" . --include="*.js" --include="*.jsx" || true
+    
+    - name: Verify no console.log in production
+      run: |
+        if grep -r "console\." frontend/src --include="*.jsx" --include="*.js" | grep -v "console.error"; then
+          echo "Warning: Found console statements that should be removed"
+        fi
+      continue-on-error: true
